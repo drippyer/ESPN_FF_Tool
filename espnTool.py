@@ -6,6 +6,7 @@ from time import sleep
 import datetime
 from userData import (currentWeek, year, leagues)
 
+
 beginTime = datetime.datetime.now()
 beginTime = beginTime.replace(microsecond = 0)
 
