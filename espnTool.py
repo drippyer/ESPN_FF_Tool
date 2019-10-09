@@ -280,30 +280,37 @@ def getTopScore(league_index):
     scorers = []
     topScores = []
     topScorers = []
+    week = []
+    weeks = []
+    topWeek = []
+    topWeeks = []
 
     getLeague(league_index)
 
-    i = 0
     for i in range(currentWeek):
-        box_scores = getLeague.league.box_scores(i)
+        box_scores = getLeague.league.box_scores(i + 1)
 
         for game in box_scores:
             scorers.append(game.home_team.team_name)
             scores.append(game.home_score)
+            weeks.append(i + 1)
 
             scorers.append(game.away_team.team_name)
             scores.append(game.away_score)
+            weeks.append(i + 1)
 
         topScores.append(max(scores))
         topScorers.append(scorers[scores.index(max(scores))])
+        topWeeks.append(weeks[scores.index(max(scores))])
 
     topScore = max(topScores)
     topScorer = topScorers[topScores.index(topScore)]
+    topWeek = topWeeks[topScores.index(topScore)]
 
     if topScorer == teamName:
         topScorer = greenText(topScorer)
 
-    roundUpAwards.add_row(["Highest Score This Season", topScorer, str(round(topScore, 2)) + " points in 1 week"])
+    roundUpAwards.add_row(["Highest Score This Season", topScorer, str(round(topScore, 2)) + " points in week " + str(topWeek)])
 
 def getMinMaxScores(league_index):
     roundUpAwards = roundUp.roundUpAwards
@@ -364,8 +371,14 @@ def getVictoryMargins(league_index):
     maxMatchup = matchups[margins.index(maxMargin)]
     minMatchup = matchups[margins.index(minMargin)]
 
-    roundUpAwards.add_row(["Blowout of the Week", maxMatchup, str(round(maxMargin, 2)) + " point differential"])
-    roundUpAwards.add_row(["Nailbiter of the Week", minMatchup, str(round(minMargin, 2)) + " point differential"])
+    maxMargin = round(maxMargin, 2)
+    minMargin = round(minMargin, 2)
+
+    if minMargin <= 10:
+        minMargin = yellowText(minMargin)
+
+    roundUpAwards.add_row(["Blowout of the Week", maxMatchup, str(maxMargin) + " point differential"])
+    roundUpAwards.add_row(["Nailbiter of the Week", minMatchup, str(minMargin) + " point differential"])
 
 def getScoreSummary(league_index):
     roundUpScoreboard = roundUp.roundUpScoreboard
@@ -473,7 +486,6 @@ def roundUp(league_index, week):
     getBenchScore(league_index)
     getTopScore(league_index)
 
-    clear()
     print("    " + negText("*~* " + leagueName + ": Week " + str(week) + " Round Up *~*"))
     print(roundUpScoreboard)
     print(roundUpAwards)
